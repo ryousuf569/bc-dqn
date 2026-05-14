@@ -1,36 +1,51 @@
 import numpy as np
-import scipy as sp
-import matplotlib.pyplot as mt
 
-class network:
+np.random.seed(42)
+xs = np.array([-5,-4,-3,-2,-1,0,1,2,3,4,5], dtype=float)
+xs.reshape(-1, 1) # -1 means "figure it out numpy"
+ys = xs ** 2
+ys.reshape(-1, 1)
 
-    def __init__(self, weights, bias):
-        self.weights = weights
-        self.bias = bias
+W1 = np.random.randn(8, 1) * np.sqrt(2 / 1)
+b1 = np.zeros((8, 1))
 
-    def zed(self, w, b, x):
-        return (w * x) + b
+W2 = np.random.randn(8, 8) * np.sqrt(2 / 8)
+b2 = np.zeros((8, 1))
 
-    def relu(self, z):
-        return max(0, z)
+W3 = np.random.randn(1, 8) * np.sqrt(2 / 8)
+b3 = np.zeros((1, 1))
 
-    def forward(self, x, layer_nums=3):
-        a = x
+def forward(x):
+    
+    zs = []     # store z at every layer
+    as_ = []    # store a at every layer (including input)
+    
+    a = x       # input is the first activation
+    as_.append(a)
+    
+    z1 = a @ W1.T + b1
+    a1 = np.maximum(0, z1)
+    zs.append(z1)
+    as_.append(a1)
 
-        for i in range(layer_nums):
+    z2 = a1 @ W2.T + b2
+    a2 = np.maximum(0, z2)
+    zs.append(z2)
+    as_.append(a2)
 
-            W = self.weights[i]
-            b = self.bias[i]
-            z = self.zed(W, b, a)
-            a = self.relu(z)
-            print(f"Layer {i} | Z = {z}, Relu = {a}")
-        
-        return self.zed(self.weights[i], self.bias[i], a)
+    z3 = a2 @ W3.T + b3
+    a3 = z3
+    zs.append(z3)
+    as_.append(a3)
+    
+    return as_[-1], zs, as_
 
+def loss(y_hat, ys, n):
 
-nn = network([2, 1, 0.5], [0.2, 0.5, 1])
-data = [(3, 9), (2, 6), (4, 12), (7, 21)]
+    loss = np.sum((y_hat - ys) ** 2) / (2 * n)
+    dL_da3 = (y_hat - ys) / n
 
-for i in range(len(data)):
-    print(f"-----------------{data[i][0]}----------------")
-    nn.forward(data[i][0])
+    return loss, dL_da3
+
+y_hat, zs, as_ = forward(xs)
+loss(y_hat, ys, 11)
