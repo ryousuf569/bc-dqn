@@ -1,2 +1,2 @@
-# bc-dqn
-by hand nn + dqn agent for late game nba decisions
+# groove
+by hand nn + dqn agent for midi key detection (in progress)
