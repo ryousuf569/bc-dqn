@@ -105,6 +105,8 @@ def finite_diff_check(xs, ys, weights, eps=1e-6):
     
     all_passed = True
 
+
+    # ONLY RUN WHEN NEEDED, triple nested loop will kill if it ran every training loop
     for W, dW, name in zip(weight_mats, analytic_grads, names):
         for i in range(W.shape[0]):
             for j in range(W.shape[1]):
